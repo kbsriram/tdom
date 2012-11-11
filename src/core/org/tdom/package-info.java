@@ -1,6 +1,6 @@
 /**
  * <p>This package is a standalone library to create a simple tree
- * datastructure that can be created and modified succintly, and
+ * datastructure that can be created and modified succinctly, and
  * rendered into HTML or other textual formats.</p>
  *
  * <p>Here's a hello world example.</p>

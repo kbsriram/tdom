@@ -1,71 +1,9 @@
-package org.tdom;
-
 /**
- * This is the base class to use TDom, a simple tree datastructure
- * that can be created and modified succintly, and rendered into
- * HTML or other textual formats.
+ * Base class to create and manipulate TDom instances.
  *
- * Here's a hello world example.
- *
- * <pre> {@code
- * import org.tdom.TDom;
- * import org.tdom.TDom.*;
- *
- * // Create straight-up html 
- * TNode html = n("html",
- *                n("head",
- *                  n("title", t("A title"))),
- *                n("body",
- *                  n("div", a("class", "content"),
- *                    t("Hello, world."))));
- *
- * // Create a header separately.
- * TNode header = n("h1", t("My title"));
- * 
- * // Insert the header before the content.
- * html.before(".content", header);
- *
- * // Add another block of text to the body.
- * html.append("body", n("div", t("Goodbye, world.")));
- *
- * // Insert a ruler after both divs.
- * html.after("div", n("hr"));
- *
- * // methods can be chained.
- * html
- *   .append("body", n("div", a("class", "footer"), t("a footer")))
- *   .after(".footer", t("that's all folks!"));
- *
- *
- * html.dump(new PrintWriter(System.out));
- * }</pre>
- *
- * TDom has three creation methods, {@link #n(String, TDom...)} to create
- * nodes, {@link #t(Object)} to create text, and
- * {@link #a(String,Object)} to create attributes. These may be succintly
- * created as in the example above, or they may be added to individual
- * nodes using methods like {@link TNode.append(TDom) }
- *
- * In addition, there are methods (rather like jquery) to add nodes
- * relative to a set of other nodes. A very simple selector syntax
- * is available. <tt>tag.class</tt> selects nodes with the given tag
- * and class. The <tt>tag</tt> or <tt>class</tt>may be left empty. The
- * <tt>#id</t> selects the node with the given id.
- *
- * Using this syntax, you may add nodes more precisely into the tree
- * with the {@link TNode.append(String, TDom) },
- * {@link TNode.prepend(String, TDom) },
- * {@link TNode.before(String, TDom) } and
- * {@link TNode.after(String, TDom)} methods. Note that there are
- * always variations of these methods that don't use a selector, in which
- * case they are assumed to apply to the root node.
- *
- * TDom generally does not care about what name you use for the tags, so
- * you can use it to generate xml formats. Finally, TDom being a data
- * structure rather than markup, you can use your own
- * visitor {@see TDom.TVisitor} to render the resultant tree. TDom itself
- * provides a simple HTML visitor, used when you call {@see #dump(PrintWriter)}.
  */
+
+package org.tdom;
 
 import java.util.Map;
 import java.util.HashMap;
