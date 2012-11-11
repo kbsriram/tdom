@@ -1,9 +1,70 @@
 package org.tdom;
 
 /**
- * This is the base class that implements a succint dom-like
- * datastructure that's convenient to create, and render into
- * various textual formats.
+ * This is the base class to use TDom, a simple tree datastructure
+ * that can be created and modified succintly, and rendered into
+ * HTML or other textual formats.
+ *
+ * Here's a hello world example.
+ *
+ * <pre> {@code
+ * import org.tdom.TDom;
+ * import org.tdom.TDom.*;
+ *
+ * // Create straight-up html 
+ * TNode html = n("html",
+ *                n("head",
+ *                  n("title", t("A title"))),
+ *                n("body",
+ *                  n("div", a("class", "content"),
+ *                    t("Hello, world."))));
+ *
+ * // Create a header separately.
+ * TNode header = n("h1", t("My title"));
+ * 
+ * // Insert the header before the content.
+ * html.before(".content", header);
+ *
+ * // Add another block of text to the body.
+ * html.append("body", n("div", t("Goodbye, world.")));
+ *
+ * // Insert a ruler after both divs.
+ * html.after("div", n("hr"));
+ *
+ * // methods can be chained.
+ * html
+ *   .append("body", n("div", a("class", "footer"), t("a footer")))
+ *   .after(".footer", t("that's all folks!"));
+ *
+ *
+ * html.dump(new PrintWriter(System.out));
+ * }</pre>
+ *
+ * TDom has three creation methods, {@link #n(String, TDom...)} to create
+ * nodes, {@link #t(Object)} to create text, and
+ * {@link #a(String,Object)} to create attributes. These may be succintly
+ * created as in the example above, or they may be added to individual
+ * nodes using methods like {@link TNode.append(TDom) }
+ *
+ * In addition, there are methods (rather like jquery) to add nodes
+ * relative to a set of other nodes. A very simple selector syntax
+ * is available. <tt>tag.class</tt> selects nodes with the given tag
+ * and class. The <tt>tag</tt> or <tt>class</tt>may be left empty. The
+ * <tt>#id</t> selects the node with the given id.
+ *
+ * Using this syntax, you may add nodes more precisely into the tree
+ * with the {@link TNode.append(String, TDom) },
+ * {@link TNode.prepend(String, TDom) },
+ * {@link TNode.before(String, TDom) } and
+ * {@link TNode.after(String, TDom)} methods. Note that there are
+ * always variations of these methods that don't use a selector, in which
+ * case they are assumed to apply to the root node.
+ *
+ * TDom generally does not care about what name you use for the tags, so
+ * you can use it to generate xml formats. Finally, TDom being a data
+ * structure rather than markup, you can use your own
+ * visitor {@see TDom.TVisitor} to render the resultant tree. TDom itself
+ * provides a simple HTML visitor, used when you call {@see #dump(PrintWriter)}.
  */
 
 import java.util.Map;
@@ -17,6 +78,14 @@ import java.io.PrintWriter;
 
 public abstract class TDom
 {
+    /**
+     * Create a new TNode with the given name as a tag.
+     *
+     * @param name is the name of the node to 
+     * @param extra is a set of TDom instances that will be appended
+     * to the returned node.
+     * @return a TNode with any extra TDom objects appended.
+     */
     public final static TNode n(String name, TDom... extra)
     {
         TNode ret = new TNode(name);
@@ -26,15 +95,41 @@ public abstract class TDom
         return ret;
     }
 
-    public final static TAttr a(String name, String value)
+    /**
+     * @param name is the name for the attribute
+     * @param value is any object -- String.valueOf() will be called
+     * on the object and used for the attribute's value.
+     * @return a TAttr with the name and value set.
+     */
+    public final static TAttr a(String name, Object value)
     { return new TAttr(name, value); }
 
-    public final static TText t(String text)
-    { return new TText(text); }
 
+    /**
+     * @param o is any object -- String.valueOf() will be called
+     * on this object, and a TText instance will be initialized with
+     * this result.
+     * @return a TText object with the string value of the object.
+     */
+    public final static TText t(Object o)
+    { return new TText(o); }
+
+    /**
+     * Render this node into the provided printstream.
+     * @param pw is the printstream where the textual output
+     * is dumped.
+     */
     public void dump(final PrintWriter pw)
     { visit(new HTMLVisitor(pw)); }
 
+    /**
+     * This interface allows you to visit TDom objects, so you
+     * may render text in a different way if you find appropriate.
+     *
+     * Please note that you are in control of the visit sequence by
+     * calling visit() on any child nodes of TNode. The code will
+     * not call visit() automatically.
+     */
     public interface TVisitor
     {
         void visitText(TText t);
@@ -47,8 +142,8 @@ public abstract class TDom
 
     public final static class TText extends TDom
     {
-        public TText(String text)
-        { m_text = text; }
+        public TText(Object o)
+        { m_text = String.valueOf(o); }
         public String getText()
         { return m_text; }
         public void visit(TVisitor v)
@@ -61,10 +156,10 @@ public abstract class TDom
 
     public final static class TAttr extends TDom
     {
-        public TAttr(String name, String value)
+        public TAttr(String name, Object value)
         {
             m_name = name;
-            m_value = value;
+            m_value = String.valueOf(value);
         }
         public String getName()
         { return m_name; }
@@ -84,7 +179,7 @@ public abstract class TDom
         public TNode(String name)
         { m_name = name; }
 
-        public void setParent(TNode n)
+        private void setParent(TNode n)
         {
             if (m_parent != null) {
                 throw new IllegalStateException
@@ -92,9 +187,18 @@ public abstract class TDom
             }
             m_parent = n;
         }
+
+        /**
+         * @return the parent of this node, or null if
+         * this node has none.
+         */
         public TNode up()
         { return m_parent; }
 
+        /**
+         * @return a deep copy of this TNode, but without
+         * a parent.
+         */
         public TNode dup()
         {
             TNode ret = new TNode(m_name);
@@ -107,6 +211,15 @@ public abstract class TDom
             return ret;
         }
 
+        /**
+         * Insert the provided object before this node. (ie, after
+         * the operation, thing will become a sibling, just earlier
+         * than this node.)
+         *
+         * @param thing is an instance to insert before this node in the tree.
+         * @throws IllegalStateException if thing already has a parent, or
+         * if this node has no parent.
+         */
         public TNode before(TDom thing)
         {
             if (m_parent == null) {
@@ -126,6 +239,16 @@ public abstract class TDom
                 ("Unexpected -- parent doesn't contain child.");
         }
 
+        /**
+         * Insert the provided object before all nodes selected by
+         * the provided selector.
+         *
+         * @param selector is a selector string. Syntax at
+         * {@link #find(String) }
+         * @param thing is an instance to insert before this node in the tree.
+         * @throws IllegalStateException if thing already has a parent, or
+         * if a selected node has no parent.
+         */
         public TNode before(String selector, TDom thing)
         { return before(false, selector, thing); }
 
@@ -138,6 +261,15 @@ public abstract class TDom
                 });
         }
 
+        /**
+         * Insert the provided object after this node. (ie, after
+         * the operation, thing will become a sibling, just after
+         * this node.)
+         *
+         * @param thing is an instance to insert before this node in the tree.
+         * @throws IllegalStateException if thing already has a parent, or
+         * if this node has no parent.
+         */
         public TNode after(TDom thing)
         {
             if (m_parent == null) {
@@ -162,6 +294,15 @@ public abstract class TDom
                 ("Unexpected -- parent doesn't contain child.");
         }
 
+        /**
+         * Insert the provided object after all nodes selected by
+         * the provided selector.
+         *
+         * @param selector is a selector string. Syntax at {@link #find(String) }
+         * @param thing is an instance to insert before this node in the tree.
+         * @throws IllegalStateException if thing already has a parent, or
+         * if this node has no parent.
+         */
         public TNode after(String selector, TDom thing)
         { return after(false, selector, thing); }
 
@@ -174,7 +315,13 @@ public abstract class TDom
                 });
         }
 
-
+        /**
+         * Insert the provided thing at the desired index.
+         * Note that if TDom is actually a TAttr, it is simply
+         * added to the attribute set.
+         * @param idx index to add the element.
+         * @param thing to add to this node.
+         */
         public TNode addAt(int idx, TDom thing)
         {
             if (thing instanceof TAttr) {
@@ -205,6 +352,11 @@ public abstract class TDom
             m_children.remove(thing);
             return this;
         }
+
+        /**
+         * Remove all nodes that match the provided selector
+         * @param selector a selector string. Syntax at {@link #find(String) }
+         */
         public TNode remove(String selector)
         { return remove(false, selector); }
 
@@ -219,9 +371,19 @@ public abstract class TDom
                 });
         }
 
+        /**
+         * Add the provided TDom instance at the end of this
+         * node (unless it's a TAttr, in which case it's simply
+         * added to the attribute set.)
+         */
+
         public TNode append(TDom thing)
         { return addAt(-1, thing); }
 
+        /**
+         * Add the provided TDom instance at the end of all
+         * nodes that match the provided selector string.
+         */
         public TNode append(String selector, TDom thing)
         { return append(false, selector, thing); }
 
@@ -250,9 +412,18 @@ public abstract class TDom
             return this;
         }
 
+        /**
+         * Add the provided TDom instance at the beginning of this
+         * node (unless it's a TAttr, in which case it's simply
+         * added to the attribute set.)
+         */
         public TNode prepend(TDom thing)
         { return addAt(0, thing); }
 
+        /**
+         * Add the provided TDom instance at the beginning of all
+         * nodes that match the provided selector string.
+         */
         public TNode prepend(String selector, TDom thing)
         { return prepend(false, selector, thing); }
 
@@ -265,6 +436,15 @@ public abstract class TDom
                 });
         }
 
+
+        /**
+         * Find all nodes that match the given selector string.
+         * 
+         * A very simple selector syntax is available.
+         * <tt>tag.class</tt> selects nodes with the given tag
+         * and class. The <tt>tag</tt> or <tt>class</tt>may be left empty.
+         * The <tt>#id</t> selects the node with the given id.
+         */
         public List<TNode> find(String selector)
         {
             int idx = selector.indexOf('.');
@@ -352,12 +532,32 @@ public abstract class TDom
         { m_pw = pw; }
 
         public void visitText(TText t)
-        { m_pw.print(t.getText()); }
+        { escape(t.getText(), false); }
+
+        private void escape(String s, boolean alsoquotes)
+        {
+            char chars[] = s.toCharArray();
+            for (int i=0; i<chars.length; i++) {
+                char c = chars[i];
+                switch (c) {
+                case '&' : m_pw.write("&amp;"); break;
+                case '>' : m_pw.write("&gt;"); break;
+                case '<' : m_pw.write("&lt;"); break;
+
+                default:
+                    if (alsoquotes && (c == '"')) { m_pw.print("&quot;"); }
+                    else if (c < 127) { m_pw.write(c); }
+                    else { m_pw.write("&#"+((int)c)+";"); }
+                    break;
+                }
+            }
+        }
+
         public void visitAttr(TAttr attr)
         {
             m_pw.print(attr.getName());
             m_pw.print("=\"");
-            m_pw.print(attr.getValue());
+            escape(attr.getValue(), true);
             m_pw.print("\"");
         }
         public void visitNode(TNode n)

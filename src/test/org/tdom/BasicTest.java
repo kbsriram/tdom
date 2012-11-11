@@ -28,10 +28,13 @@ public class BasicTest
         TNode html =
             n("html",
               n("head",
-                n("link", a("type", "stylesheet"), a("href", "a.css"))));
+                n("link",
+                  a("type", "stylesheet"),
+                  a("href", "http://example.com/a.css"))));
 
         check(html,
-              "<html><head><link type=\"stylesheet\" href=\"a.css\" />"+
+              "<html><head>"+
+              "<link type=\"stylesheet\" href=\"http://example.com/a.css\" />"+
               "</head></html>");
 
         TNode body =
@@ -53,7 +56,9 @@ public class BasicTest
 
         html.after("head", body);
         check(html,
-              "<html><head><link type=\"stylesheet\" href=\"a.css\" /></head>"+
+              "<html><head>"+
+              "<link type=\"stylesheet\" href=\"http://example.com/a.css\" />"+
+              "</head>"+
               "<body><h1>Hello, world</h1><div class=\"content\">"+
               "<div class=\"tile\">This is tile 0</div></div></body></html>");
 

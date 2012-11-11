@@ -1,0 +1,264 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!--NewPage-->
+<HTML>
+<HEAD>
+<TITLE>
+org.tdom
+</TITLE>
+
+
+<LINK REL ="stylesheet" TYPE="text/css" HREF="../../stylesheet.css" TITLE="Style">
+
+<SCRIPT type="text/javascript">
+function windowTitle()
+{
+    if (location.href.indexOf('is-external=true') == -1) {
+        parent.document.title="org.tdom";
+    }
+}
+</SCRIPT>
+<NOSCRIPT>
+</NOSCRIPT>
+
+</HEAD>
+
+<BODY BGCOLOR="white" onload="windowTitle();">
+<HR>
+
+
+<!-- ========= START OF TOP NAVBAR ======= -->
+<A NAME="navbar_top"><!-- --></A>
+<A HREF="#skip-navbar_top" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_top_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../org/tdom/package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <FONT CLASS="NavBarFont1">Class</FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;PREV PACKAGE&nbsp;
+&nbsp;NEXT PACKAGE</FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../index.html?org/tdom/package-summary.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="package-summary.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_top"></A>
+<!-- ========= END OF TOP NAVBAR ========= -->
+
+<HR>
+<H2>
+Package org.tdom
+</H2>
+This package is a standalone library to create a simple tree
+ datastructure that can be created and modified succintly, and
+ rendered into HTML or other textual formats.
+<P>
+<B>See:</B>
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="#package_description"><B>Description</B></A>
+<P>
+
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Interface Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../org/tdom/TDom.TVisitor.html" title="interface in org.tdom">TDom.TVisitor</A></B></TD>
+<TD>This interface allows you to visit TDom objects, so you
+ may render text in a different way if you find appropriate.</TD>
+</TR>
+</TABLE>
+&nbsp;
+
+<P>
+
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Class Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../org/tdom/TDom.html" title="class in org.tdom">TDom</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../org/tdom/TDom.TAttr.html" title="class in org.tdom">TDom.TAttr</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../org/tdom/TDom.TNode.html" title="class in org.tdom">TDom.TNode</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../org/tdom/TDom.TText.html" title="class in org.tdom">TDom.TText</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+</TABLE>
+&nbsp;
+
+<P>
+<A NAME="package_description"><!-- --></A><H2>
+Package org.tdom Description
+</H2>
+
+<P>
+<p>This package is a standalone library to create a simple tree
+ datastructure that can be created and modified succintly, and
+ rendered into HTML or other textual formats.</p>
+
+ <p>Here's a hello world example.</p>
+
+ <pre> <code>import org.tdom.TDom;
+ import org.tdom.TDom.*;
+
+ // Create straight-up html 
+ TNode html = n("html",
+                n("head",
+                  n("title", t("A title"))),
+                n("body",
+                  n("div", a("class", "content"),
+                    t("Hello, world."))));
+
+ // Create a header separately.
+ TNode header = n("h1", t("My title"));
+ 
+ // Insert the header before the content.
+ html.before(".content", header);
+
+ // Add another block of text to the body.
+ html.append("body", n("div", t("Goodbye, world.")));
+
+ // Insert a ruler after both divs.
+ html.after("div", n("hr"));
+
+ // methods can be chained.
+ html
+   .append("body", n("div", a("class", "footer"), t("a footer")))
+   .after(".footer", t("that's all folks!"));
+
+
+ html.dump(new PrintWriter(System.out));
+ </code></pre>
+
+ <p>TDom has three creation methods,
+ <A HREF="../../org/tdom/TDom.html#n(java.lang.String, org.tdom.TDom...)"><CODE>TDom.n(java.lang.String, org.tdom.TDom...)</CODE></A> to create
+ nodes, <A HREF="../../org/tdom/TDom.html#t(java.lang.Object)"><CODE>TDom.t(Object)</CODE></A> to create text, and
+ <A HREF="../../org/tdom/TDom.html#a(java.lang.String, java.lang.Object)"><CODE>TDom.a(String,Object)</CODE></A> to create attributes. These may be succintly
+ created as in the example above, or they may be added to individual
+ nodes using methods like
+ <A HREF="../../org/tdom/TDom.TNode.html#append(org.tdom.TDom)"><CODE>TDom.TNode.append(org.tdom.TDom)</CODE></A></p>
+
+ <p>In addition, there are methods (rather like jquery) to add nodes
+ relative to a set of other nodes. A very simple selector syntax
+ is available. <tt>tag.class</tt> selects nodes with the given tag
+ and class. The <tt>tag</tt> or <tt>class</tt>may be left empty. The
+ <tt>#id</tt> selects the node with the given id.,</p>
+
+ <p>Using this syntax, you may add nodes more precisely into the tree
+ with the
+ <A HREF="../../org/tdom/TDom.TNode.html#append(java.lang.String, org.tdom.TDom)"><CODE>TDom.TNode.append(String, org.tdom.TDom)</CODE></A>,
+ <A HREF="../../org/tdom/TDom.TNode.html#prepend(java.lang.String, org.tdom.TDom)"><CODE>TDom.TNode.prepend(String, org.tdom.TDom)</CODE></A>,
+ <A HREF="../../org/tdom/TDom.TNode.html#before(java.lang.String, org.tdom.TDom)"><CODE>TDom.TNode.before(String, org.tdom.TDom)</CODE></A> and
+ <A HREF="../../org/tdom/TDom.TNode.html#after(java.lang.String, org.tdom.TDom)"><CODE>TDom.TNode.after(String, org.tdom.TDom)</CODE></A> methods.</p>
+
+ <p>Note that there are
+ always variations of these methods that don't use a selector, in which
+ case they are assumed to apply to the root node.</p>
+
+ <p>TDom generally does not care about what name you use for the tags, so
+ you can use it to generate xml formats. Finally, TDom being a data
+ structure rather than markup, you can use your own
+ visitor <A HREF="../../org/tdom/TDom.TVisitor.html" title="interface in org.tdom"><CODE>TDom.TVisitor</CODE></A> to render the resultant tree.
+ TDom itself
+ provides a simple HTML visitor, used when you call
+ <A HREF="../../org/tdom/TDom.html#dump(java.io.PrintWriter)"><CODE>TDom.dump(PrintWriter)</CODE></A>.</p>
+<P>
+
+<P>
+<DL>
+</DL>
+<HR>
+
+
+<!-- ======= START OF BOTTOM NAVBAR ====== -->
+<A NAME="navbar_bottom"><!-- --></A>
+<A HREF="#skip-navbar_bottom" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_bottom_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../org/tdom/package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <FONT CLASS="NavBarFont1">Class</FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;PREV PACKAGE&nbsp;
+&nbsp;NEXT PACKAGE</FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../index.html?org/tdom/package-summary.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="package-summary.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_bottom"></A>
+<!-- ======== END OF BOTTOM NAVBAR ======= -->
+
+<HR>
+
+</BODY>
+</HTML>
