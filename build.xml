@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="tdom" default="release" basedir=".">
+
+  <property name="java.source" value="1.5"/>
+  <property name="java.target" value="1.5"/>
+  <property name="lib.dir" value="${basedir}/lib"/>
+  <property name="bin.dir" value="${basedir}/bin"/>
+  <property name="javadoc.dir" value="${basedir}/javadoc"/>
+
+  <property name="classes.dir" value="classes"/>
+  <property name="src.dir" value="src"/>
+  <property name="reports.dir" value="${src.dir}/test/reports"/>
+
+  <target name="release"
+          depends="test,javadoc,jar"/>
+
+  <target name="init">
+    <mkdir dir="${classes.dir}/core"/>
+    <mkdir dir="${classes.dir}/test"/>
+    <mkdir dir="${reports.dir}"/>
+    <mkdir dir="${bin.dir}"/>
+    <mkdir dir="${javadoc.dir}"/>
+  </target>
+
+  <target name="javadoc"
+          depends="compile">
+    <javadoc
+        destdir="${javadoc.dir}">
+      <sourcepath>
+        <pathelement path="${src.dir}/core"/>
+      </sourcepath>
+      <classpath>
+        <pathelement location="${classes.dir}/core"/>
+      </classpath>
+      <arg value="-notimestamp"/>
+    </javadoc>
+  </target>
+
+  <target name="compile" depends="init">
+    <javac source="${java.source}"
+           target="${java.target}"
+           debug="true"
+           srcdir="${src.dir}/core"
+           includeantruntime="false"
+           destdir="${classes.dir}/core">
+      <compilerarg value="-Xlint:all"/>
+    </javac>
+  </target>
+
+  <target name="jar"
+          depends="compile">
+    <jar destfile="${bin.dir}/tdom.jar">
+      <fileset dir="${classes.dir}/core"/>
+    </jar>
+  </target>
+
+  <target name="test-compile" depends="compile">
+    <javac source="${java.source}"
+           target="${java.target}"
+           debug="true"
+           srcdir="${src.dir}/test"
+           includeantruntime="false"
+           destdir="${classes.dir}/test">
+      <compilerarg value="-Xlint:all"/>
+      <classpath>
+        <pathelement location="${classes.dir}/core"/>
+        <pathelement location="${lib.dir}/junit-4.10.jar"/>
+      </classpath>
+    </javac>
+  </target>
+
+  <target name="test" depends="test-compile">
+    <junit printsummary="yes" haltonfailure="yes">
+      <classpath>
+        <pathelement location="${classes.dir}/core"/>
+        <pathelement location="${classes.dir}/test"/>
+        <pathelement location="${lib.dir}/junit-4.10.jar"/>
+      </classpath>
+      <formatter type="plain"/>
+      <batchtest todir="${reports.dir}">
+        <fileset dir="${src.dir}/test">
+          <include name="**/*Test.java"/>
+        </fileset>
+      </batchtest>
+    </junit>
+      
+  </target>
+
+  <target name="clean">
+    <delete dir="${classes.dir}"/>
+    <delete dir="${reports.dir}"/>
+    <delete dir="${bin.dir}"/>
+    <delete dir="${javadoc.dir}"/>
+  </target>
+
+</project>
