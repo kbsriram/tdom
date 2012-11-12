@@ -29,7 +29,7 @@ public class RenderingExample
         // If you wrote it directly in HTML, this is how it looks.
 
         // <div class="vcard">
-        //   <img class="photo" src="bob.jpg"/>
+        //   <img class="photo" src="http://example.com/bob.jpg"/>
         //   <strong class="fn">Bob Smith</strong>
         //   is the
         //   <span class="title">Senior editor</span>
@@ -39,7 +39,7 @@ public class RenderingExample
 
         TNode content =
             n("div", a("class", "vcard"),
-              n("img", a("class", "photo"), a("src", "bob.jpg")),
+              n("img", a("class", "photo"), a("src", "http://example.com/bob.jpg")),
               n("strong", a("class", "fn"), t("Bob Smith")),
               t(" is the "),
               n("span", a("class", "title"), t("Senior editor")),
@@ -57,6 +57,7 @@ public class RenderingExample
         // Render out the vcard to a vcard format.
         html.select(".vcard").visit(new VCardRenderer(printWriter));
         printWriter.println();
+        printWriter.flush();
     }
 
     // Simple-minded implementation just for a demo.
@@ -78,7 +79,7 @@ public class RenderingExample
             if (vtag != null) {
                 if (vtag.equals("vcard")) {
                     m_pw.println("BEGIN:VCARD");
-                    m_pw.println("VERSION:3.0");
+                    m_pw.println("VERSION:4.0");
                     for (TDom child: n.getChildren()) {
                         if (child instanceof TTagNode) { child.visit(this); }
                     }
@@ -86,7 +87,7 @@ public class RenderingExample
                 }
 
                 else if (vtag.equals("photo")) {
-                    m_pw.print("PHOTO;VALUE=URL:");
+                    m_pw.print("PHOTO:");
                     m_pw.println(n.getAttrs().get("src").getValue());
                 }
 
