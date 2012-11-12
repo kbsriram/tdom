@@ -144,12 +144,14 @@ quote.render(printWriter);
 // custom renderer outputs JSON
 // Please see TDom.TVisitor
 quote.visit(new MyJSONRenderer(printWriter));
-// { "quotes":
+//{
+//  "quotes": {
 //    "children" : [
-//      { "quote": {"ticker": "AAA" }, {"close": 10.0}},
-//      { "quote": {"ticker": "BBB" }, {"close": 5.0}}
-//    ]
-// }
+//       { "quote": {"ticker": "AAA", "close": 10.0}},
+//       { "quote": {"ticker": "BBB", "close": 5.0}}
+//     ]
+//  }
+//}
 
 </pre>
 
