@@ -103,6 +103,15 @@ pre {
     margin-bottom: 1.571428em;
 }
 
+a.quiet {
+    text-decoration: none;
+    color: inherit;
+}
+
+a.quiet:hover {
+    text-decoration: none;
+}
+
 a {
     text-decoration: none;
     color: #36c;
