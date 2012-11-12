@@ -8,7 +8,7 @@ structures and render it into HTML or other textual formats.
 See the [getting started](http://kbsriram.github.com/tdom/ "Getting Started")
 documentation to get going with this library.
 
-You can simply add the [java file](/kbsriram/tdom/blob/master/src/core/org/tdom/TDom.java))
+You can simply add the [java file](/kbsriram/tdom/blob/master/src/core/org/tdom/TDom.java)
 to your source, or
 [download tdom.jar](/kbsriram/tdom/raw/master/bin/tdom.jar)
 and add it to your project.
