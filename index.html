@@ -13,11 +13,10 @@
 and manipulate DOM-like trees from Java. It is useful to generate HTML
 or XML without using JSPs or pulling in large libraries.</p>
 
-<p>I call it a technique rather than a library as the code is
-just
+<p>The code is in
 <a href="https://github.com/kbsriram/tdom/blob/master/src/core/org/tdom/TDom.java">a
-single java file</a> under 600 lines. You can simply add this file to
-your source, or grab
+single java file</a> running around 600 lines. You can directly
+add it to your source, or grab
 <a href="https://github.com/kbsriram/tdom/raw/master/bin/tdom.jar">a jar
 file</a> from the
 <a href="https://github.com/kbsriram/tdom/">github repository</a>.  At
@@ -26,8 +25,8 @@ own needs.</p>
 
 <h2>Usage</h2>
 
-<p>Constructing plain HTML works with a set of static methods, and
-indented directly by your editor.  This results in an indentation that
+<p>Constructing HTML declaratively works with a set of static methods,
+and is indented directly by your editor.  The resulting indentation
 reflects the structure of the HTML. The method names are
 inconspicuous, and the HTML is visually prominent as you scan the
 code.</p>
@@ -51,8 +50,8 @@ TNode html =
 <tt>t()</tt> creates text. These methods can be nested
 arbitrarily, and mirrors the structure of the underlying HTML.</p>
 
-<p>However, I usually construct structures in separate methods rather
-than directly inline as above.</p>
+<p>However, you'll probably construct large structures in separate
+methods rather than directly inline as above.</p>
 
 <pre>
 TNode html =
@@ -63,7 +62,7 @@ TNode html =
 
 <p>This permits a more modular way to construct the tree, please see
 the section on <a href="#patterns">Typical Patterns</a> as well. But
-I'll keep the inline style for this example.</p>
+I'll stick to the declarative style in this example.</p>
 
 <p>Once you have a partially constructed tree, you can continue
 inserting nodes. I've borrowed something like jQuery's selector
