@@ -11,22 +11,22 @@ import java.util.Set;
 import java.util.HashSet;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import java.io.PrintWriter;
 
 public abstract class TDom
 {
     /**
-     * Create a new TNode with the given name as a tag.
+     * Create a new TTagNode with the given name as a tag.
      *
-     * @param name is the name of the node to 
+     * @param name is the name of the node
      * @param extra is a set of TDom instances that will be appended
      * to the returned node.
-     * @return a TNode with any extra TDom objects appended.
      */
-    public final static TNode n(String name, TDom... extra)
+    public final static TTagNode n(String name, TDom... extra)
     {
-        TNode ret = new TNode(name);
+        TTagNode ret = new TTagNode(name);
         for (int i=0; i<extra.length; i++) {
             ret.append(extra[i]);
         }
@@ -37,7 +37,6 @@ public abstract class TDom
      * @param name is the name for the attribute
      * @param value is any object -- String.valueOf() will be called
      * on the object and used for the attribute's value.
-     * @return a TAttr with the name and value set.
      */
     public final static TAttr a(String name, Object value)
     { return new TAttr(name, value); }
@@ -47,7 +46,6 @@ public abstract class TDom
      * @param o is any object -- String.valueOf() will be called
      * on this object, and a TText instance will be initialized with
      * this result.
-     * @return a TText object with the string value of the object.
      */
     public final static TText t(Object o)
     { return new TText(o); }
@@ -64,18 +62,23 @@ public abstract class TDom
      * This interface allows you to visit TDom objects, so you
      * may render text in a different way if you find appropriate.
      *
-     * Please note that you are in control of the visit sequence by
-     * calling visit() on any child nodes of TNode. The code will
-     * not call visit() automatically.
+     * Please note that you are in charge of the visit sequence by
+     * explicitly calling visit() on any TDom child nodes you want
+     * continue visiting.
      */
     public interface TVisitor
     {
         void visitText(TText t);
         void visitAttr(TAttr attr);
-        void visitNode(TNode n);
+        void visitTagNode(TTagNode n);
+        void visitList(TList l);
     }
 
     public abstract void visit(TVisitor v);
+
+    /**
+     * @return a deep copy of this object.
+     */
     public abstract TDom dup();
 
     public final static class TText extends TDom
@@ -105,6 +108,7 @@ public abstract class TDom
         { return m_value; }
         public void visit(TVisitor v)
         { v.visitAttr(this); }
+
         public TAttr dup()
         { return this; }
 
@@ -112,12 +116,93 @@ public abstract class TDom
         private final String m_value;
     }
 
-    public final static class TNode extends TDom
+    public static abstract class TNode extends TDom
     {
-        public TNode(String name)
+
+        /**
+         * @return the parent(s) of this node.
+         */
+        public abstract TNode up();
+
+        /**
+         * Insert the provided thing at the desired index.
+         * Note that if TDom is actually a TAttr, it is simply
+         * added to the attribute set.
+         * @param idx index to add the element.
+         * @param thing to add to this node.
+         */
+        public abstract TNode addAt(int idx, TDom thing);
+
+        /**
+         * Select all TTagNodes that match the given selector string.
+         * 
+         * A very simple selector syntax is available.
+         * <tt>tag.class</tt> selects nodes with the given tag
+         * and class. The <tt>tag</tt> or <tt>class</tt>may be left empty.
+         * The <tt>#id</t> selects the node with the given id.
+         *
+         * @return a TList containing the selected TTagNodes.
+         */
+        public abstract TList select(String selector);
+
+        public TNode append(TDom thing)
+        { return addAt(-1, thing); }
+        public TNode append(String selector, TDom thing)
+        { select(selector).append(thing); return this; }
+        public TNode prepend(TDom thing)
+        { return addAt(0, thing); }
+        public TNode prepend(String selector, TDom thing)
+        { select(selector).prepend(thing); return this; }
+
+        /**
+         * Remove the provided object from these nodes if it
+         * exists.
+         * @param thing is the object to be removed.
+         */
+        public abstract TNode remove(TDom thing);
+
+        /**
+         * Entirely remove these nodes from the tree.
+         */
+        public abstract TNode remove();
+        public TNode remove(String selector)
+        { select(selector).remove(); return this; }
+        public TNode remove(String selector, TDom thing)
+        { select(selector).remove(thing); return this; }
+
+        /**
+         * Insert the provided object before these nodes. (ie, after
+         * the operation, thing will become a sibling to each node, and
+         * located just before it.)
+         *
+         * @param thing is an instance to insert before this node in the tree.
+         * @throws IllegalStateException if thing already has a parent, or
+         * if a node has no parent.
+         */
+        public abstract TNode before(TDom thing);
+        public TNode before(String selector, TDom thing)
+        { select(selector).before(thing); return this; }
+
+        /**
+         * Insert the provided object after these nodes. (ie, after
+         * the operation, thing will become a sibling, just after
+         * each node.)
+         *
+         * @param thing is an instance to insert before this node in the tree.
+         * @throws IllegalStateException if thing already has a parent, or
+         * if this node has no parent.
+         */
+        public abstract TNode after(TDom thing);
+        public TNode after(String selector, TDom thing)
+        { select(selector).after(thing); return this; }
+    }
+
+    public final static class TTagNode extends TNode
+    {
+        public TTagNode(String name)
         { m_name = name; }
 
-        private void setParent(TNode n)
+        private void setParent(TTagNode n)
         {
             if (m_parent != null) {
                 throw new IllegalStateException
@@ -126,20 +211,12 @@ public abstract class TDom
             m_parent = n;
         }
 
-        /**
-         * @return the parent of this node, or null if
-         * this node has none.
-         */
-        public TNode up()
+        public TTagNode up()
         { return m_parent; }
 
-        /**
-         * @return a deep copy of this TNode, but without
-         * a parent.
-         */
-        public TNode dup()
+        public TTagNode dup()
         {
-            TNode ret = new TNode(m_name);
+            TTagNode ret = new TTagNode(m_name);
             for (TAttr attr: m_attrs.values()) {
                 ret.append(attr.dup());
             }
@@ -149,16 +226,7 @@ public abstract class TDom
             return ret;
         }
 
-        /**
-         * Insert the provided object before this node. (ie, after
-         * the operation, thing will become a sibling, just earlier
-         * than this node.)
-         *
-         * @param thing is an instance to insert before this node in the tree.
-         * @throws IllegalStateException if thing already has a parent, or
-         * if this node has no parent.
-         */
-        public TNode before(TDom thing)
+        public TTagNode before(TDom thing)
         {
             if (m_parent == null) {
                 throw new IllegalStateException
@@ -177,38 +245,7 @@ public abstract class TDom
                 ("Unexpected -- parent doesn't contain child.");
         }
 
-        /**
-         * Insert the provided object before all nodes selected by
-         * the provided selector.
-         *
-         * @param selector is a selector string. Syntax at
-         * {@link #find(String) }
-         * @param thing is an instance to insert before this node in the tree.
-         * @throws IllegalStateException if thing already has a parent, or
-         * if a selected node has no parent.
-         */
-        public TNode before(String selector, TDom thing)
-        { return before(false, selector, thing); }
-
-        public TNode before(boolean throwifmissing, String selector, TDom thing)
-        {
-            return doOp(throwifmissing, selector, thing, new Op() {
-                    public void apply(TNode target, TDom d) {
-                        target.before(d);
-                    }
-                });
-        }
-
-        /**
-         * Insert the provided object after this node. (ie, after
-         * the operation, thing will become a sibling, just after
-         * this node.)
-         *
-         * @param thing is an instance to insert before this node in the tree.
-         * @throws IllegalStateException if thing already has a parent, or
-         * if this node has no parent.
-         */
-        public TNode after(TDom thing)
+        public TTagNode after(TDom thing)
         {
             if (m_parent == null) {
                 throw new IllegalStateException
@@ -232,44 +269,22 @@ public abstract class TDom
                 ("Unexpected -- parent doesn't contain child.");
         }
 
-        /**
-         * Insert the provided object after all nodes selected by
-         * the provided selector.
-         *
-         * @param selector is a selector string. Syntax at {@link #find(String) }
-         * @param thing is an instance to insert before this node in the tree.
-         * @throws IllegalStateException if thing already has a parent, or
-         * if this node has no parent.
-         */
-        public TNode after(String selector, TDom thing)
-        { return after(false, selector, thing); }
-
-        public TNode after(boolean throwifmissing, String selector, TDom thing)
-        {
-            return doOp(throwifmissing, selector, thing, new Op() {
-                    public void apply(TNode target, TDom d) {
-                        target.after(d);
-                    }
-                });
-        }
-
-        /**
-         * Insert the provided thing at the desired index.
-         * Note that if TDom is actually a TAttr, it is simply
-         * added to the attribute set.
-         * @param idx index to add the element.
-         * @param thing to add to this node.
-         */
-        public TNode addAt(int idx, TDom thing)
+        public TTagNode addAt(int idx, TDom thing)
         {
             if (thing instanceof TAttr) {
                 TAttr attr = (TAttr) thing;
                 m_attrs.put(attr.getName().toLowerCase(), attr);
             }
+            else if (thing instanceof TList) {
+                for (TNode entry: ((TList) thing).getEntries()) {
+                    addAt(idx, entry);
+                    if (idx >= 0) { idx++; }
+                }
+            }
             else {
                 // First ensure we can reparent.
-                if (thing instanceof TNode) {
-                    ((TNode) thing).setParent(this);
+                if (thing instanceof TTagNode) {
+                    ((TTagNode) thing).setParent(this);
                 }
                 if (idx >= 0) {
                     m_children.add(idx, thing);
@@ -281,170 +296,89 @@ public abstract class TDom
             return this;
         }
 
-        public TNode remove(TDom thing)
+        public TTagNode remove(TDom thing)
         {
             if (thing instanceof TAttr) {
                 m_attrs.remove(((TAttr) thing).getName().toLowerCase());
-                return this;
             }
-            m_children.remove(thing);
-            return this;
-        }
-
-        /**
-         * Remove all nodes that match the provided selector
-         * @param selector a selector string. Syntax at {@link #find(String) }
-         */
-        public TNode remove(String selector)
-        { return remove(false, selector); }
-
-        public TNode remove(boolean throwifmissing, String selector)
-        {
-            return doOp(throwifmissing, selector, null, new Op() {
-                    public void apply(TNode target, TDom d) {
-                        if (target.m_parent != null) {
-                            target.m_parent.remove(target);
-                        }
-                    }
-                });
-        }
-
-        /**
-         * Add the provided TDom instance at the end of this
-         * node (unless it's a TAttr, in which case it's simply
-         * added to the attribute set.)
-         */
-
-        public TNode append(TDom thing)
-        { return addAt(-1, thing); }
-
-        /**
-         * Add the provided TDom instance at the end of all
-         * nodes that match the provided selector string.
-         */
-        public TNode append(String selector, TDom thing)
-        { return append(false, selector, thing); }
-
-        public TNode append(boolean throwifmissing, String selector, TDom thing)
-        {
-            return doOp(throwifmissing, selector, thing, new Op() {
-                    public void apply(TNode target, TDom d) {
-                        target.append(d);
-                    }
-                });
-        }
-
-        private TNode doOp
-            (boolean throwifmissing, String selector, TDom thing, Op op)
-        {
-            int count = 0;
-            for (TNode node: find(selector)) {
-                if (count == 0) { op.apply(node, thing); }
-                else { op.apply(node, (thing!=null)?thing.dup():null); }
-                count++;
+            else if (thing instanceof TList) {
+                for (TTagNode entry: ((TList) thing).getEntries()) {
+                    m_children.remove(entry);
+                }
             }
-            if (throwifmissing && (count == 0)) {
-                throw new NullPointerException
-                    ("No node matched '"+selector+ "' under <"+getName()+">");
+            else {
+                m_children.remove(thing);
             }
             return this;
         }
 
-        /**
-         * Add the provided TDom instance at the beginning of this
-         * node (unless it's a TAttr, in which case it's simply
-         * added to the attribute set.)
-         */
-        public TNode prepend(TDom thing)
-        { return addAt(0, thing); }
-
-        /**
-         * Add the provided TDom instance at the beginning of all
-         * nodes that match the provided selector string.
-         */
-        public TNode prepend(String selector, TDom thing)
-        { return prepend(false, selector, thing); }
-
-        public TNode prepend(boolean throwifmissing,String selector, TDom thing)
+        public TTagNode remove()
         {
-            return doOp(throwifmissing, selector, thing, new Op() {
-                    public void apply(TNode target, TDom d) {
-                        target.prepend(d);
-                    }
-                });
+            if (m_parent != null) { m_parent.remove(this); }
+            return this;
         }
 
-
-        /**
-         * Find all nodes that match the given selector string.
-         * 
-         * A very simple selector syntax is available.
-         * <tt>tag.class</tt> selects nodes with the given tag
-         * and class. The <tt>tag</tt> or <tt>class</tt>may be left empty.
-         * The <tt>#id</t> selects the node with the given id.
-         */
-        public List<TNode> find(String selector)
+        public TList select(String selector)
         {
             int idx = selector.indexOf('.');
-            List<TNode> ret = new ArrayList<TNode>();
             if (idx >= 0) {
                 String tag = (idx==0)?null:selector.substring(0, idx);
                 String clazz = (idx<(selector.length()-1))?
                     selector.substring(idx+1):null;
-                return findByTagClass(tag, clazz, ret);
+                return selectByTagClass(tag, clazz);
             }
             else if (selector.startsWith("#")) {
-                TNode node = findById(selector.substring(1));
-                if (node != null) {
-                    ret.add(node);
-                }
+                return selectById(selector.substring(1));
             }
             else {
-                return findByTagClass(selector, null, ret);
+                return selectByTagClass(selector, null);
             }
-            return ret;
         }
 
         public boolean matchAttr(String name, String value)
         {
             TAttr attr = m_attrs.get(name);
-            if (attr == null) { return false; }
-            return value.equals(attr.getValue());
+            return (attr != null) && (attr.getValue().equals(value));
         }
 
-        public List<TNode> findByTagClass(String tag, String clazz)
-        { return findByTagClass(tag, clazz, new ArrayList<TNode>()); }
+        public TList selectByTagClass(String tag, String clazz)
+        { return selectByTagClass(tag, clazz, new TList()); }
 
-        public List<TNode> findByTagClass
-            (String tag, String clazz, List<TNode> accum)
+        private TList selectByTagClass(String tag, String clazz, TList accum)
         {
             if (((tag == null) || (getName().equals(tag))) &&
                 ((clazz == null) || (matchAttr("class", clazz)))) {
-                accum.add(this);
-                return accum;
+                accum.concat(this);
             }
-
-            for (TDom child: m_children) {
-                if (child instanceof TNode) {
-                    ((TNode) child).findByTagClass(tag, clazz, accum);
+            else {
+                for (TDom child: m_children) {
+                    if (child instanceof TTagNode) {
+                        ((TTagNode) child).selectByTagClass(tag, clazz, accum);
+                    }
                 }
             }
             return accum;
         }
 
-        public TNode findById(String id)
+        public TList selectById(String id)
+        { return selectById(id, new TList()); }
+
+        private TList selectById(String id, TList accum)
         {
             if (matchAttr("id", id)) {
-                return this;
+                accum.concat(this);
             }
-
-            for (TDom child: m_children) {
-                if (child instanceof TNode) {
-                    TNode ret = ((TNode) child).findById(id);
-                    if (ret != null) { return ret; }
+            else {
+                for (TDom child: m_children) {
+                    if (child instanceof TTagNode) {
+                        ((TTagNode) child).selectById(id, accum);
+                        if (accum.getEntries().size() > 0) {
+                            break;
+                        }
+                    }
                 }
             }
-            return null;
+            return accum;
         }
 
         public String getName()
@@ -454,13 +388,109 @@ public abstract class TDom
         public List<TDom> getChildren()
         { return m_children; }
         public void visit(TVisitor v)
-        { v.visitNode(this); }
+        { v.visitTagNode(this); }
 
         private final String m_name;
-        private TNode m_parent = null;
+        private TTagNode m_parent = null;
         private final List<TDom> m_children = new ArrayList<TDom>();
         private final Map<String,TAttr> m_attrs = new HashMap<String,TAttr>();
-        interface Op { void apply(TNode target, TDom thing); }
+    }
+
+    public final static class TList extends TNode
+    {
+        public TList(TNode... nodes)
+        {
+            m_entries = new ArrayList<TTagNode>();
+            concat(nodes);
+        }
+
+        public TList concat(TNode... nodes)
+        {
+            for (int i=0; i<nodes.length; i++) {
+                TNode cur = nodes[i];
+                if (cur instanceof TTagNode) { m_entries.add((TTagNode) cur); }
+                else { m_entries.addAll(((TList) cur).getEntries()); }
+            }
+            return this;
+        }
+
+        public TTagNode nth(int idx)
+        { return m_entries.get(idx); }
+
+        public TTagNode last()
+        { return m_entries.get(m_entries.size()-1); }
+
+        public TList up()
+        {
+            TList ret = new TList();
+            for (TTagNode entry: m_entries) { ret.append(entry.up()); }
+            return ret;
+        }
+
+        public TList addAt(int idx, TDom thing)
+        {
+            boolean first = true;
+            for (TTagNode entry: m_entries) {
+                entry.addAt(idx, first?thing:thing.dup());
+                first = false;
+            }
+            return this;
+        }
+        public TList remove(TDom thing)
+        {
+            for (TTagNode entry: m_entries) { entry.remove(thing); }
+            return this;
+        }
+        public TList remove()
+        {
+            for (TTagNode entry: m_entries) { entry.remove(); }
+            return this;
+        }
+        public TList select(String selector)
+        {
+            TList ret = new TList();
+            for (TTagNode entry: m_entries) {
+                ret.m_entries.addAll(entry.select(selector).m_entries);
+            }
+            return ret;
+        }
+
+        public TList before(TDom thing)
+        {
+            boolean first = true;
+            for (TTagNode entry: m_entries) {
+                entry.before(first?thing:thing.dup());
+                first = false;
+            }
+            return this;
+        }
+
+        public TList after(TDom thing)
+        {
+            boolean first = true;
+            for (TTagNode entry: m_entries) {
+                entry.after(first?thing:thing.dup());
+                first = false;
+            }
+            return this;
+        }
+
+        public TList dup()
+        {
+            TList ret = new TList();
+            for (TTagNode entry: m_entries) {
+                ret.m_entries.add(entry.dup());
+            }
+            return ret;
+        }
+
+        public void visit(TVisitor v)
+        { v.visitList(this); }
+
+        public List<TTagNode> getEntries()
+        { return m_entries; }
+
+        private final List<TTagNode> m_entries;
     }
 
     private final static class HTMLVisitor
@@ -498,7 +528,15 @@ public abstract class TDom
             escape(attr.getValue(), true);
             m_pw.print("\"");
         }
-        public void visitNode(TNode n)
+
+        public void visitList(TList l)
+        {
+            for (TNode n: l.getEntries()) {
+                n.visit(this);
+            }
+        }
+
+        public void visitTagNode(TTagNode n)
         {
             m_pw.print("<");
             m_pw.print(n.getName());

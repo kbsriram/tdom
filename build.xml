@@ -17,6 +17,7 @@
   <target name="init">
     <mkdir dir="${classes.dir}/core"/>
     <mkdir dir="${classes.dir}/test"/>
+    <mkdir dir="${classes.dir}/example"/>
     <mkdir dir="${reports.dir}"/>
     <mkdir dir="${bin.dir}"/>
     <mkdir dir="${javadoc.dir}"/>
@@ -34,6 +35,36 @@
       </classpath>
       <arg value="-notimestamp"/>
     </javadoc>
+  </target>
+
+  <target name="example" depends="example-compile">
+    <java classname="Example">
+      <classpath>
+        <pathelement location="${bin.dir}/tdom.jar"/>
+        <pathelement location="${classes.dir}/example"/>
+      </classpath>
+    </java>
+
+    <java classname="RenderingExample">
+      <classpath>
+        <pathelement location="${bin.dir}/tdom.jar"/>
+        <pathelement location="${classes.dir}/example"/>
+      </classpath>
+    </java>
+
+  </target>
+
+  <target name="example-compile" depends="jar">
+    <javac source="${java.source}"
+           target="${java.target}"
+           debug="true"
+           srcdir="${src.dir}/example"
+           includeantruntime="false"
+           destdir="${classes.dir}/example">
+      <classpath>
+        <pathelement location="${bin.dir}/tdom.jar"/>
+      </classpath>
+    </javac>
   </target>
 
   <target name="compile" depends="init">

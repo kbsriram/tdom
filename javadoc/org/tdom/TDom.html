@@ -122,7 +122,23 @@ java.lang.Object
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>static&nbsp;class</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../org/tdom/TDom.TList.html" title="class in org.tdom">TDom.TList</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;class</CODE></FONT></TD>
 <TD><CODE><B><A HREF="../../org/tdom/TDom.TNode.html" title="class in org.tdom">TDom.TNode</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;class</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../org/tdom/TDom.TTagNode.html" title="class in org.tdom">TDom.TTagNode</A></B></CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
@@ -197,12 +213,12 @@ java.lang.Object
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>static&nbsp;<A HREF="../../org/tdom/TDom.TNode.html" title="class in org.tdom">TDom.TNode</A></CODE></FONT></TD>
+<CODE>static&nbsp;<A HREF="../../org/tdom/TDom.TTagNode.html" title="class in org.tdom">TDom.TTagNode</A></CODE></FONT></TD>
 <TD><CODE><B><A HREF="../../org/tdom/TDom.html#n(java.lang.String, org.tdom.TDom...)">n</A></B>(java.lang.String&nbsp;name,
   <A HREF="../../org/tdom/TDom.html" title="class in org.tdom">TDom</A>...&nbsp;extra)</CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Create a new TNode with the given name as a tag.</TD>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Create a new TTagNode with the given name as a tag.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -263,15 +279,14 @@ public <B>TDom</B>()</PRE>
 <A NAME="n(java.lang.String, org.tdom.TDom...)"><!-- --></A><H3>
 n</H3>
 <PRE>
-public static final <A HREF="../../org/tdom/TDom.TNode.html" title="class in org.tdom">TDom.TNode</A> <B>n</B>(java.lang.String&nbsp;name,
-                                 <A HREF="../../org/tdom/TDom.html" title="class in org.tdom">TDom</A>...&nbsp;extra)</PRE>
+public static final <A HREF="../../org/tdom/TDom.TTagNode.html" title="class in org.tdom">TDom.TTagNode</A> <B>n</B>(java.lang.String&nbsp;name,
+                                    <A HREF="../../org/tdom/TDom.html" title="class in org.tdom">TDom</A>...&nbsp;extra)</PRE>
 <DL>
-<DD>Create a new TNode with the given name as a tag.
+<DD>Create a new TTagNode with the given name as a tag.
 <P>
 <DD><DL>
-<DT><B>Parameters:</B><DD><CODE>name</CODE> - is the name of the node to<DD><CODE>extra</CODE> - is a set of TDom instances that will be appended
- to the returned node.
-<DT><B>Returns:</B><DD>a TNode with any extra TDom objects appended.</DL>
+<DT><B>Parameters:</B><DD><CODE>name</CODE> - is the name of the node<DD><CODE>extra</CODE> - is a set of TDom instances that will be appended
+ to the returned node.</DL>
 </DD>
 </DL>
 <HR>
@@ -284,8 +299,7 @@ public static final <A HREF="../../org/tdom/TDom.TAttr.html" title="class in org
 <DL>
 <DD><DL>
 <DT><B>Parameters:</B><DD><CODE>name</CODE> - is the name for the attribute<DD><CODE>value</CODE> - is any object -- String.valueOf() will be called
- on the object and used for the attribute's value.
-<DT><B>Returns:</B><DD>a TAttr with the name and value set.</DL>
+ on the object and used for the attribute's value.</DL>
 </DD>
 </DL>
 <HR>
@@ -298,8 +312,7 @@ public static final <A HREF="../../org/tdom/TDom.TText.html" title="class in org
 <DD><DL>
 <DT><B>Parameters:</B><DD><CODE>o</CODE> - is any object -- String.valueOf() will be called
  on this object, and a TText instance will be initialized with
- this result.
-<DT><B>Returns:</B><DD>a TText object with the string value of the object.</DL>
+ this result.</DL>
 </DD>
 </DL>
 <HR>
@@ -335,7 +348,8 @@ dup</H3>
 public abstract <A HREF="../../org/tdom/TDom.html" title="class in org.tdom">TDom</A> <B>dup</B>()</PRE>
 <DL>
 <DD><DL>
-</DL>
+
+<DT><B>Returns:</B><DD>a deep copy of this object.</DL>
 </DD>
 </DL>
 <!-- ========= END OF CLASS DATA ========= -->

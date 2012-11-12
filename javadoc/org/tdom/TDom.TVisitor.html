@@ -99,9 +99,9 @@ Interface TDom.TVisitor</H2>
 This interface allows you to visit TDom objects, so you
  may render text in a different way if you find appropriate.
 
- Please note that you are in control of the visit sequence by
- calling visit() on any child nodes of TNode. The code will
- not call visit() automatically.
+ Please note that you are in charge of the visit sequence by
+ explicitly calling visit() on any TDom child nodes you want
+ continue visiting.
 <P>
 
 <P>
@@ -128,7 +128,15 @@ This interface allows you to visit TDom objects, so you
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;void</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../org/tdom/TDom.TVisitor.html#visitNode(org.tdom.TDom.TNode)">visitNode</A></B>(<A HREF="../../org/tdom/TDom.TNode.html" title="class in org.tdom">TDom.TNode</A>&nbsp;n)</CODE>
+<TD><CODE><B><A HREF="../../org/tdom/TDom.TVisitor.html#visitList(org.tdom.TDom.TList)">visitList</A></B>(<A HREF="../../org/tdom/TDom.TList.html" title="class in org.tdom">TDom.TList</A>&nbsp;l)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../org/tdom/TDom.TVisitor.html#visitTagNode(org.tdom.TDom.TTagNode)">visitTagNode</A></B>(<A HREF="../../org/tdom/TDom.TTagNode.html" title="class in org.tdom">TDom.TTagNode</A>&nbsp;n)</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
@@ -177,10 +185,21 @@ void <B>visitAttr</B>(<A HREF="../../org/tdom/TDom.TAttr.html" title="class in o
 </DL>
 <HR>
 
-<A NAME="visitNode(org.tdom.TDom.TNode)"><!-- --></A><H3>
-visitNode</H3>
+<A NAME="visitTagNode(org.tdom.TDom.TTagNode)"><!-- --></A><H3>
+visitTagNode</H3>
 <PRE>
-void <B>visitNode</B>(<A HREF="../../org/tdom/TDom.TNode.html" title="class in org.tdom">TDom.TNode</A>&nbsp;n)</PRE>
+void <B>visitTagNode</B>(<A HREF="../../org/tdom/TDom.TTagNode.html" title="class in org.tdom">TDom.TTagNode</A>&nbsp;n)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="visitList(org.tdom.TDom.TList)"><!-- --></A><H3>
+visitList</H3>
+<PRE>
+void <B>visitList</B>(<A HREF="../../org/tdom/TDom.TList.html" title="class in org.tdom">TDom.TList</A>&nbsp;l)</PRE>
 <DL>
 <DD><DL>
 </DL>
