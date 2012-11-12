@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="en">
+<head>
+<title>TDom: A succinct way to manipulate dom-like structures</title>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<link rel="stylesheet" href="css/style.css"/>
+</head>
+<body>
+<h1>TDom</h1>
+
+<p>For some time now I've been using a technique to succinctly create and
+manipulate DOM-like trees from Java. I've bundled it into
+<a href="https://github.com/kbsriram/tdom/">a small library</a>, and
+hope you find it useful when you need to generate HTML or XML from a
+servlet without using JSPs or pulling in large libraries.
+
+<p>The library is embarrassingly small, with just
+<a href="https://github.com/kbsriram/tdom/blob/master/src/core/org/tdom/TDom.java">one
+java file</a> of about 550 lines, and amenable to adapting it for your
+own needs.</p>
+
+<h2>Usage</h2>
+
+<p>Constructing plain HTML works with a set of static methods that can
+be directly formatted by your editor (as it's just java.) It results
+in a layout that reflects the structure of the HTML. The method names
+are kept small and the HTML is easy to scan as you read the code.</p>
+
+<pre>
+import org.tdom.TDom;
+import org.tdom.TDom.*;
+
+// ....
+// Create straight-up html 
+TNode html =
+    n("html",
+      n("head",
+        n("title", t("A title"))),
+      n("body",
+        n("div", a("class", "content"),
+          t("Hello, world."))));
+</pre>
+
+<p><tt>n()</tt> creates nodes, <tt>a()</tt> adds attributes, and
+<tt>t()</tt> creates text. As you can see, these methods can be nested
+arbitrarily, and reflect the structure of the underlying HTML.</p>
+
+<p>You can also insert nodes later on by using something resembling
+jQuery's selector mechanism.</p>
+
+<pre>
+// Before:
+// &lt;body&gt;
+// &lt;div class="content"&gt;
+// ...
+
+// Insert a title before the content div
+html.before(".content", n("h1", t("The Title")));
+
+// Becomes:
+// &lt;body&gt;
+// &lt;h1&gt;The Title&lt;/h1&gt;
+// &lt;div class="content"&gt;
+// ...
+</pre>
+
+<p>The selector syntax is limited -- in fact, it only understands
+tags, tagged classes and ids. That said, it's handy when you need to
+precisely insert new nodes or do a bulk change after generating some
+portion of the tree.</p>
+
+<pre>
+
+// Insert another content block at the end of the body.
+html.append("body",
+            n("div", a("class", "content"),
+              t("Goodbye, World")));
+
+// Add a spacing ruler at the end of all content blocks.
+html.after(".content", n("hr", a("class", "space")));
+
+// Include a css file to style the content.
+html.append("head",
+            n("link", a("rel", "stylesheet"),
+                      a("href", "css/style.css")));
+
+// Render everything to some PrintWriter
+html.dump(printWriter);
+</pre>
+
+The generated HTML <a href="example.html">looks like this</a>.
+
+<h2>Typical patterns</h2>
+
+<p>Visual design is often done through CSS files, leaving the Java
+code to generate relatively straightforward <tt>div</tt>
+structures.</p>
+
+<p>Java design patterns also normally have a layer that generates a data
+object composed of many smaller data objects, and a rendering layer
+that generates HTML from these objects. For instance, to render a
+picture album, there may be a <tt>AlbumInfo</tt> object that contains
+a list of <tt>PictureInfo</tt> objects, as well as some meta-data
+about the album itself.</p>
+
+<p>A simple way to render such objects is by creating different
+methods (or classes, if you prefer) to render a sub-tree corresponding
+to each interesting sub-object. The parent object then composes the
+children into a larger sub-tree, and so on.</p>
+
+<p>So there might be a <tt>makePictureTile(PictureInfo)</tt> method that
+renders just the html for one tile. A <tt>makeAlbum(AlbumInfo)</tt>
+method would use the <tt>makePictureTile()</tt> for
+each <tt>PictureInfo</tt> object and build up the tree for the album,
+and so on. The toplevel code just passes the container object to the
+appropriate method, and renders the resultant tree (after any desired
+tweaks.)</p>
+
+<p>Note that the library provides no support to format text (say
+dates.)  I've found that it's best to use dedicated, locale-specific
+libraries for this purpose (eg: java.text.MessageFormat, or some other
+translation library.)</p>
+
+<p>Finally, because this is a data-structure rather than markup, it is
+possible to render the information into different textual formats.
+For instance, you may be able to generate both XML and JSON from the
+same TDom structure.</p>
+
+<pre>
+// generate a sample list of quotes.
+TDom quote =
+  n("quotes",
+    n("quote", a("ticker", "AAA"), a("close", 10.0f)),
+    n("quote", a("ticker", "BBB"), a("close", 5.0f)));
+
+// default renderer outputs XML
+quote.render(printWriter);
+// &lt;quotes&gt;
+//   &lt;quote ticker="AAA" close="10.0"&gt;
+//   &lt;quote ticker="BBB" close="5.0"&gt;
+// &lt;/quotes&gt;
+
+// custom renderer outputs JSON
+// Please see TDom.TVisitor
+quote.visit(new MyJSONRenderer(printWriter));
+// { "quotes":
+//    "children" : [
+//      { "quote": {"ticker": "AAA" }, {"close": 10.0}},
+//      { "quote": {"ticker": "BBB" }, {"close": 5.0}}
+//    ]
+// }
+
+</pre>
+
+<p style="margin-top:2.75em; margin-left:-8%;text-align:right"><small>by <a href="https://plus.google.com/102207019656909757485?rel=author">KB Sriram <img src="https://lh5.googleusercontent.com/-9fHCOzZy0WI/AAAAAAAAAAI/AAAAAAAAAIk/fH4Ta6jcviI/s48-c-k/photo.jpg" style="height:3.4375em; float: right;margin-top:-2.175em; margin-left: 0.4em;"/> </a></small></p>
+</body>
+</html>
