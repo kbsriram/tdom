@@ -135,7 +135,7 @@ TDom quote =
     n("quote", a("ticker", "BBB"), a("close", 5.0f)));
 
 // default renderer outputs XML
-quote.render(printWriter);
+quote.dump(printWriter);
 // &lt;quotes&gt;
 //   &lt;quote ticker="AAA" close="10.0"&gt;
 //   &lt;quote ticker="BBB" close="5.0"&gt;
