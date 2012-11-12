@@ -121,16 +121,4 @@ public class RenderingExample
         { m_pw = pw; }
         private final PrintWriter m_pw;
     }
-
-    private final static class JSONRenderer implements TVisitor
-    {
-        public void visitText(TText t){}
-        public void visitAttr(TAttr attr){}
-        public void visitTagNode(TTagNode n){}
-        public void visitList(TList l){}
-
-        private JSONRenderer(PrintWriter pw)
-        { m_pw = pw; }
-        private final PrintWriter m_pw;
-    }
 }
