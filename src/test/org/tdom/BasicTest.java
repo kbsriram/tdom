@@ -142,6 +142,20 @@ public class BasicTest
               "</div>");
     }
 
+    @Test public void testUp()
+    {
+        TNode root = n("div");
+        for (int i=0; i<5; i++) {
+            root.append(n("p"));
+        }
+        root.select("p").nth(0).append(n("span"));
+        check(root.select("span").up(),
+              "<p><span /></p>");
+
+        // Check that we avoid dups in selectors.
+        assertEquals(1, root.select("p").up().getEntries().size());
+    }
+
     @Test public void adHocTests()
     {
         TNode html =

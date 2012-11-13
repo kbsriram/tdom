@@ -408,8 +408,10 @@ public abstract class TDom
         {
             for (int i=0; i<nodes.length; i++) {
                 TNode cur = nodes[i];
-                if (cur instanceof TTagNode) { m_entries.add((TTagNode) cur); }
-                else { m_entries.addAll(((TList) cur).getEntries()); }
+                if (cur instanceof TTagNode) { merge((TTagNode) cur); }
+                else {
+                    for (TTagNode e: ((TList) cur).getEntries()) { merge(e); }
+                }
             }
             return this;
         }
@@ -423,7 +425,7 @@ public abstract class TDom
         public TList up()
         {
             TList ret = new TList();
-            for (TTagNode entry: m_entries) { ret.append(entry.up()); }
+            for (TTagNode entry: m_entries) { ret.concat(entry.up()); }
             return ret;
         }
 
@@ -489,6 +491,11 @@ public abstract class TDom
 
         public List<TTagNode> getEntries()
         { return m_entries; }
+
+        private void merge(TTagNode e)
+        {
+            if (!m_entries.contains(e)) { m_entries.add(e); }
+        }
 
         private final List<TTagNode> m_entries;
     }
