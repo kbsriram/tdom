@@ -20,7 +20,7 @@ public class Example
         // Insert a title before the content div
         html.before(".content", n("h1", t("The Title")));
 
-        // html.before(".content", ...) is internally runs
+        // html.before(".content", ...) internally runs
         // html.select(".content").before(...)
 
         html.select(".content").dump(printWriter);

@@ -142,8 +142,8 @@ public abstract class TDom
          * ids can be used. (eg: <tt>"div.content"</tt>, <tt>"span#id"</tt>,
          * <tt>"body"</tt> etc. Simple attribute-based selectors can be used,
          * eg: <tt>"span[class=~'copyright']"</tt>, <tt>a[name]</tt> etc.
-         * Finally, descendent selectors can be used, eg:
-         * <tt>div.content p.author a[href]</tt> etc. Note that attribute
+         * Finally, descendant selectors can be used, eg:
+         * <tt>"div.content p.author a[href]"</tt> etc. Note that attribute
          * selectors use the single quote (') to avoid backslashitis in java.
          * @return a TList containing the selected TTagNodes.
          */
