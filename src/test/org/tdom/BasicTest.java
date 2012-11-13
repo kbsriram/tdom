@@ -112,6 +112,42 @@ public class BasicTest
               "<p class=\"second\">second paragraph</p>"+
               "<p id=\"third_id\">third paragraph</p>"+
               "</div>");
+
+        content.append("p", n("span", t("some stuff")));
+        content.select("span").nth(1).append(a("class", "myspan otherspan"));
+
+        // We should be able to handle multiple class stuff.
+        check(content.select("span.myspan"),
+              "<span class=\"myspan otherspan\">some stuff</span>");
+        check(content.select(".otherspan"),
+              "<span class=\"myspan otherspan\">some stuff</span>");
+
+        // Check attribute-based selectors.
+        check(content.select("span[class]"),
+              "<span class=\"myspan otherspan\">some stuff</span>");
+
+        check(content.select("[id]"),
+              "<p id=\"third_id\">third paragraph<span>some stuff</span></p>");
+        check(content.select("span[class='myspan']"),
+              "");
+        check(content.select("span[class=~'myspan']"),
+              "<span class=\"myspan otherspan\">some stuff</span>");
+        // ensure we handle whitespace properly
+        check(content.select("[class=~'myspa']"), "");
+        check(content.select("[class=~'ther']"), "");
+        check(content.select("[class=~'therspan']"), "");
+
+        // nested selections.
+        check(content.select("p").select("#third_id"),
+              "<p id=\"third_id\">third paragraph<span>some stuff</span></p>");
+
+        // hierarchies.
+        check(content.select("p span.myspan"),
+              "<span class=\"myspan otherspan\">some stuff</span>");
+        check(content.select("div p span.myspan"),
+              "<span class=\"myspan otherspan\">some stuff</span>");
+        check(content.select("div span.myspan"),
+              "<span class=\"myspan otherspan\">some stuff</span>");
     }
 
     @Test public void testDeletes()

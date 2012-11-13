@@ -12,6 +12,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.regex.Pattern;
+import java.util.regex.Matcher;
 
 import java.io.PrintWriter;
 
@@ -36,7 +38,7 @@ public abstract class TDom
     /**
      * @param name is the name for the attribute
      * @param value is any object -- String.valueOf() will be called
-     * on the object and used for the attribute's value.
+     * on a non-null object and used for the attribute's value.
      */
     public final static TAttr a(String name, Object value)
     { return new TAttr(name, value); }
@@ -100,7 +102,7 @@ public abstract class TDom
         public TAttr(String name, Object value)
         {
             m_name = name;
-            m_value = String.valueOf(value);
+            m_value = value==null?null:String.valueOf(value);
         }
         public String getName()
         { return m_name; }
@@ -136,11 +138,13 @@ public abstract class TDom
         /**
          * Select all TTagNodes that match the given selector string.
          * 
-         * A very simple selector syntax is available.
-         * <tt>tag.class</tt> selects nodes with the given tag
-         * and class. The <tt>tag</tt> or <tt>class</tt>may be left empty.
-         * The <tt>#id</t> selects the node with the given id.
-         *
+         * A very simple selector syntax is available. Tagged classes and
+         * ids can be used. (eg: <tt>"div.content"</tt>, <tt>"span#id"</tt>,
+         * <tt>"body"</tt> etc. Simple attribute-based selectors can be used,
+         * eg: <tt>"span[class=~'copyright']"</tt>, <tt>a[name]</tt> etc.
+         * Finally, descendent selectors can be used, eg:
+         * <tt>div.content p.author a[href]</tt> etc. Note that attribute
+         * selectors use the single quote (') to avoid backslashitis in java.
          * @return a TList containing the selected TTagNodes.
          */
         public abstract TList select(String selector);
@@ -320,65 +324,50 @@ public abstract class TDom
 
         public TList select(String selector)
         {
-            int idx = selector.indexOf('.');
-            if (idx >= 0) {
-                String tag = (idx==0)?null:selector.substring(0, idx);
-                String clazz = (idx<(selector.length()-1))?
-                    selector.substring(idx+1):null;
-                return selectByTagClass(tag, clazz);
+            String[] fields = selector.split("\\s+");
+            if (fields.length > 1) { // handle hierarchy.
+                TList ret = new TList(this);
+                for (int i=0;i<fields.length;i++) { ret=ret.select(fields[i]); }
+                return ret;
             }
-            else if (selector.startsWith("#")) {
-                return selectById(selector.substring(1));
+
+            Matcher m = ATTR.matcher(selector);
+            if (m.matches()) { // tag[attr='value']
+                String typ = m.group(4); // null, ~ or |
+                return selectField
+                    (m.group(1), m.group(2), m.group(5),
+                     (typ==null)?0:(typ.equals("~")?' ':'-'));
+            }
+            else if ((m = CLS.matcher(selector)).matches()) {
+                String typ = m.group(3); // null, # or .
+                return selectField
+                    (m.group(1),
+                     (typ==null)?null:(typ.equals("#")?"id":"class"),
+                     m.group(4), ' ');
             }
             else {
-                return selectByTagClass(selector, null);
+                throw new IllegalArgumentException
+                    ("Unknown selector '"+selector+"'");
             }
         }
 
-        public boolean matchAttr(String name, String value)
+        public boolean matchAttr(String name, String value, char sep)
         {
+            if (name == null) { return true; }
             TAttr attr = m_attrs.get(name);
-            return (attr != null) && (attr.getValue().equals(value));
-        }
-
-        public TList selectByTagClass(String tag, String clazz)
-        { return selectByTagClass(tag, clazz, new TList()); }
-
-        private TList selectByTagClass(String tag, String clazz, TList accum)
-        {
-            if (((tag == null) || (getName().equals(tag))) &&
-                ((clazz == null) || (matchAttr("class", clazz)))) {
-                accum.concat(this);
+            if (attr == null) { return false; }
+            if (value == null) { return true; }
+            String aval = attr.getValue();
+            if (aval == null) { return false; }
+            if (sep == 0) { return value.equals(aval); }
+            int sidx = aval.indexOf(value);
+            if (sidx < 0) { return false; }
+            if ((sidx > 0) && (sep != aval.charAt(sidx-1))) { return false; }
+            sidx += value.length();
+            if ((sidx < aval.length()) && (sep != aval.charAt(sidx))) {
+                return false;
             }
-            else {
-                for (TDom child: m_children) {
-                    if (child instanceof TTagNode) {
-                        ((TTagNode) child).selectByTagClass(tag, clazz, accum);
-                    }
-                }
-            }
-            return accum;
-        }
-
-        public TList selectById(String id)
-        { return selectById(id, new TList()); }
-
-        private TList selectById(String id, TList accum)
-        {
-            if (matchAttr("id", id)) {
-                accum.concat(this);
-            }
-            else {
-                for (TDom child: m_children) {
-                    if (child instanceof TTagNode) {
-                        ((TTagNode) child).selectById(id, accum);
-                        if (accum.getEntries().size() > 0) {
-                            break;
-                        }
-                    }
-                }
-            }
-            return accum;
+            return true;
         }
 
         public String getName()
@@ -390,10 +379,33 @@ public abstract class TDom
         public void visit(TVisitor v)
         { v.visitTagNode(this); }
 
+        private TList selectField
+            (String tag, String attr, String val, char sep)
+        { return selectField(tag, attr, val, sep, new TList()); }
+
+        private TList selectField
+            (String tag, String attr, String val, char sep, TList accum)
+        {
+            if (((tag == null) || (tag.equals(getName())))
+                && matchAttr(attr, val, sep)) {
+                accum.concat(this);
+            }
+            for (TDom child: m_children) {
+                if (child instanceof TTagNode) {
+                    ((TTagNode) child).selectField(tag,attr,val,sep,accum);
+                }
+            }
+            return accum;
+        }
+
         private final String m_name;
         private TTagNode m_parent = null;
         private final List<TDom> m_children = new ArrayList<TDom>();
         private final Map<String,TAttr> m_attrs = new HashMap<String,TAttr>();
+        private final static Pattern ATTR = Pattern.compile
+            ("(\\w+)?\\[(\\w+)(=(~)?'(\\w+)')?\\]");
+        private final static Pattern CLS = Pattern.compile
+            ("(\\w+)?((#|\\.)(\\w+))?");
     }
 
     public final static class TList extends TNode
@@ -409,18 +421,10 @@ public abstract class TDom
             for (int i=0; i<nodes.length; i++) {
                 TNode cur = nodes[i];
                 if (cur instanceof TTagNode) { merge((TTagNode) cur); }
-                else {
-                    for (TTagNode e: ((TList) cur).getEntries()) { merge(e); }
-                }
+                else { merge(((TList) cur).getEntries()); }
             }
             return this;
         }
-
-        public TTagNode nth(int idx)
-        { return m_entries.get(idx); }
-
-        public TTagNode last()
-        { return m_entries.get(m_entries.size()-1); }
 
         public TList up()
         {
@@ -438,21 +442,24 @@ public abstract class TDom
             }
             return this;
         }
+
         public TList remove(TDom thing)
         {
             for (TTagNode entry: m_entries) { entry.remove(thing); }
             return this;
         }
+
         public TList remove()
         {
             for (TTagNode entry: m_entries) { entry.remove(); }
             return this;
         }
+
         public TList select(String selector)
         {
             TList ret = new TList();
             for (TTagNode entry: m_entries) {
-                ret.m_entries.addAll(entry.select(selector).m_entries);
+                ret.merge(entry.select(selector).getEntries());
             }
             return ret;
         }
@@ -486,16 +493,18 @@ public abstract class TDom
             return ret;
         }
 
+        public TTagNode nth(int idx)
+        { return m_entries.get(idx); }
+        public TTagNode last()
+        { return m_entries.get(m_entries.size()-1); }
         public void visit(TVisitor v)
         { v.visitList(this); }
-
         public List<TTagNode> getEntries()
         { return m_entries; }
-
+        private void merge(List<TTagNode> l)
+        { for (TTagNode e: l) { merge(e); } }
         private void merge(TTagNode e)
-        {
-            if (!m_entries.contains(e)) { m_entries.add(e); }
-        }
+        { if (!m_entries.contains(e)) { m_entries.add(e); } }
 
         private final List<TTagNode> m_entries;
     }
@@ -531,9 +540,12 @@ public abstract class TDom
         public void visitAttr(TAttr attr)
         {
             m_pw.print(attr.getName());
-            m_pw.print("=\"");
-            escape(attr.getValue(), true);
-            m_pw.print("\"");
+            String v = attr.getValue();
+            if (v != null) {
+                m_pw.print("=\"");
+                escape(attr.getValue(), true);
+                m_pw.print("\"");
+            }
         }
 
         public void visitList(TList l)

@@ -324,28 +324,6 @@ public <A HREF="../../org/tdom/TDom.TList.html" title="class in org.tdom">TDom.T
 </DL>
 <HR>
 
-<A NAME="nth(int)"><!-- --></A><H3>
-nth</H3>
-<PRE>
-public <A HREF="../../org/tdom/TDom.TTagNode.html" title="class in org.tdom">TDom.TTagNode</A> <B>nth</B>(int&nbsp;idx)</PRE>
-<DL>
-<DD><DL>
-</DL>
-</DD>
-</DL>
-<HR>
-
-<A NAME="last()"><!-- --></A><H3>
-last</H3>
-<PRE>
-public <A HREF="../../org/tdom/TDom.TTagNode.html" title="class in org.tdom">TDom.TTagNode</A> <B>last</B>()</PRE>
-<DL>
-<DD><DL>
-</DL>
-</DD>
-</DL>
-<HR>
-
 <A NAME="up()"><!-- --></A><H3>
 up</H3>
 <PRE>
@@ -424,10 +402,13 @@ public <A HREF="../../org/tdom/TDom.TList.html" title="class in org.tdom">TDom.T
 <DD><B>Description copied from class: <CODE><A HREF="../../org/tdom/TDom.TNode.html#select(java.lang.String)">TDom.TNode</A></CODE></B></DD>
 <DD>Select all TTagNodes that match the given selector string.
  
- A very simple selector syntax is available.
- <tt>tag.class</tt> selects nodes with the given tag
- and class. The <tt>tag</tt> or <tt>class</tt>may be left empty.
- The <tt>#id</t> selects the node with the given id.
+ A very simple selector syntax is available. Tagged classes and
+ ids can be used. (eg: <tt>"div.content"</tt>, <tt>"span#id"</tt>,
+ <tt>"body"</tt> etc. Simple attribute-based selectors can be used,
+ eg: <tt>"span[class=~'copyright']"</tt>, <tt>a[name]</tt> etc.
+ Finally, descendent selectors can be used, eg:
+ <tt>div.content p.author a[href]</tt> etc. Note that attribute
+ selectors use the single quote (') to avoid backslashitis in java.
 <P>
 <DD><DL>
 <DT><B>Specified by:</B><DD><CODE><A HREF="../../org/tdom/TDom.TNode.html#select(java.lang.String)">select</A></CODE> in class <CODE><A HREF="../../org/tdom/TDom.TNode.html" title="class in org.tdom">TDom.TNode</A></CODE></DL>
@@ -488,6 +469,28 @@ public <A HREF="../../org/tdom/TDom.TList.html" title="class in org.tdom">TDom.T
 <DD><DL>
 
 <DT><B>Returns:</B><DD>a deep copy of this object.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="nth(int)"><!-- --></A><H3>
+nth</H3>
+<PRE>
+public <A HREF="../../org/tdom/TDom.TTagNode.html" title="class in org.tdom">TDom.TTagNode</A> <B>nth</B>(int&nbsp;idx)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="last()"><!-- --></A><H3>
+last</H3>
+<PRE>
+public <A HREF="../../org/tdom/TDom.TTagNode.html" title="class in org.tdom">TDom.TTagNode</A> <B>last</B>()</PRE>
+<DL>
+<DD><DL>
+</DL>
 </DD>
 </DL>
 <HR>

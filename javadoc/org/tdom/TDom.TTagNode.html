@@ -209,8 +209,9 @@ java.lang.Object
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;boolean</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../org/tdom/TDom.TTagNode.html#matchAttr(java.lang.String, java.lang.String)">matchAttr</A></B>(java.lang.String&nbsp;name,
-          java.lang.String&nbsp;value)</CODE>
+<TD><CODE><B><A HREF="../../org/tdom/TDom.TTagNode.html#matchAttr(java.lang.String, java.lang.String, char)">matchAttr</A></B>(java.lang.String&nbsp;name,
+          java.lang.String&nbsp;value,
+          char&nbsp;sep)</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
@@ -239,23 +240,6 @@ java.lang.Object
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Select all TTagNodes that match the given selector string.</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>&nbsp;<A HREF="../../org/tdom/TDom.TList.html" title="class in org.tdom">TDom.TList</A></CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../org/tdom/TDom.TTagNode.html#selectById(java.lang.String)">selectById</A></B>(java.lang.String&nbsp;id)</CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>&nbsp;<A HREF="../../org/tdom/TDom.TList.html" title="class in org.tdom">TDom.TList</A></CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../org/tdom/TDom.TTagNode.html#selectByTagClass(java.lang.String, java.lang.String)">selectByTagClass</A></B>(java.lang.String&nbsp;tag,
-                 java.lang.String&nbsp;clazz)</CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -462,10 +446,13 @@ public <A HREF="../../org/tdom/TDom.TList.html" title="class in org.tdom">TDom.T
 <DD><B>Description copied from class: <CODE><A HREF="../../org/tdom/TDom.TNode.html#select(java.lang.String)">TDom.TNode</A></CODE></B></DD>
 <DD>Select all TTagNodes that match the given selector string.
  
- A very simple selector syntax is available.
- <tt>tag.class</tt> selects nodes with the given tag
- and class. The <tt>tag</tt> or <tt>class</tt>may be left empty.
- The <tt>#id</t> selects the node with the given id.
+ A very simple selector syntax is available. Tagged classes and
+ ids can be used. (eg: <tt>"div.content"</tt>, <tt>"span#id"</tt>,
+ <tt>"body"</tt> etc. Simple attribute-based selectors can be used,
+ eg: <tt>"span[class=~'copyright']"</tt>, <tt>a[name]</tt> etc.
+ Finally, descendent selectors can be used, eg:
+ <tt>div.content p.author a[href]</tt> etc. Note that attribute
+ selectors use the single quote (') to avoid backslashitis in java.
 <P>
 <DD><DL>
 <DT><B>Specified by:</B><DD><CODE><A HREF="../../org/tdom/TDom.TNode.html#select(java.lang.String)">select</A></CODE> in class <CODE><A HREF="../../org/tdom/TDom.TNode.html" title="class in org.tdom">TDom.TNode</A></CODE></DL>
@@ -477,34 +464,12 @@ public <A HREF="../../org/tdom/TDom.TList.html" title="class in org.tdom">TDom.T
 </DL>
 <HR>
 
-<A NAME="matchAttr(java.lang.String, java.lang.String)"><!-- --></A><H3>
+<A NAME="matchAttr(java.lang.String, java.lang.String, char)"><!-- --></A><H3>
 matchAttr</H3>
 <PRE>
 public boolean <B>matchAttr</B>(java.lang.String&nbsp;name,
-                         java.lang.String&nbsp;value)</PRE>
-<DL>
-<DD><DL>
-</DL>
-</DD>
-</DL>
-<HR>
-
-<A NAME="selectByTagClass(java.lang.String, java.lang.String)"><!-- --></A><H3>
-selectByTagClass</H3>
-<PRE>
-public <A HREF="../../org/tdom/TDom.TList.html" title="class in org.tdom">TDom.TList</A> <B>selectByTagClass</B>(java.lang.String&nbsp;tag,
-                                   java.lang.String&nbsp;clazz)</PRE>
-<DL>
-<DD><DL>
-</DL>
-</DD>
-</DL>
-<HR>
-
-<A NAME="selectById(java.lang.String)"><!-- --></A><H3>
-selectById</H3>
-<PRE>
-public <A HREF="../../org/tdom/TDom.TList.html" title="class in org.tdom">TDom.TList</A> <B>selectById</B>(java.lang.String&nbsp;id)</PRE>
+                         java.lang.String&nbsp;value,
+                         char&nbsp;sep)</PRE>
 <DL>
 <DD><DL>
 </DL>

@@ -362,10 +362,13 @@ public abstract <A HREF="../../org/tdom/TDom.TList.html" title="class in org.tdo
 <DL>
 <DD>Select all TTagNodes that match the given selector string.
  
- A very simple selector syntax is available.
- <tt>tag.class</tt> selects nodes with the given tag
- and class. The <tt>tag</tt> or <tt>class</tt>may be left empty.
- The <tt>#id</t> selects the node with the given id.
+ A very simple selector syntax is available. Tagged classes and
+ ids can be used. (eg: <tt>"div.content"</tt>, <tt>"span#id"</tt>,
+ <tt>"body"</tt> etc. Simple attribute-based selectors can be used,
+ eg: <tt>"span[class=~'copyright']"</tt>, <tt>a[name]</tt> etc.
+ Finally, descendent selectors can be used, eg:
+ <tt>div.content p.author a[href]</tt> etc. Note that attribute
+ selectors use the single quote (') to avoid backslashitis in java.
 <P>
 <DD><DL>
 
