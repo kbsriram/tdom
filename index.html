@@ -83,11 +83,32 @@ html.before(".content", n("h1", t("The Title")));
 // ...
 </pre>
 
-<p>The selector syntax is limited -- in fact, it only understands
-tags, tagged classes and ids. That said, it's handy when you need to
-insert new nodes relative to other nodes, or do a bulk change after
-generating some portion of the tree. Also note that methods can be
-chained.</p>
+<p>The selector syntax is limited. You can use tagged classes and
+ids (eg: <tt>"div.content"</tt>, <tt>"span#id"</tt>, <tt>"body"</tt>,
+<tt>"#otherid"</tt> etc.)</p>
+
+<p>You can also use simple attribute-based selectors.
+<tt>"div[itemprop='affiliation']"</tt> selects all <tt>div</tt>s
+that contain an attribute <tt>itemprop</tt> with the
+value <tt>affiliation</tt>. <tt>"a[name]"</tt> selects all <tt>a</tt>
+elements that have a <tt>name</tt> attribute, regardless of its value,
+and <tt>"[itemprop]"</tt> matches any element that has
+an <tt>itemprop</tt> attribute. <tt>"div.content"</tt> is equivalent
+to <tt>"div[class=~'content']"</tt>. The <tt>~</tt> character indicates
+that <tt>content</tt> can be one of the (whitespace separated) values in
+the <tt>class</tt> attribute. Note that the
+single quote (<tt>'</tt>) is used in the attribute selectors to avoid
+backslashitis in java.</p>
+
+<p>Finally, descendant selectors can be used, (eg:
+<tt>"div.content a[href]"</tt> selects all <tt>a</tt> tags that have
+an <tt>href</tt> attribute, but only if they occur within
+a <tt>div.content</tt> block.)</p>
+
+<p>Selectors simplify inserting new nodes relative to other nodes, or
+performing a bulk change on a partially created tree.  Operations on
+selectors are always performed on all the selected nodes. Also note
+that methods can be chained.</p>
 
 <pre>
 
@@ -109,8 +130,8 @@ html.select(".content").dump(printWriter);
 
 </pre>
 
-<p>If you like this style, you can succinctly manipulate the tree by
-chaining methods.</p>
+<p>If you like the chaining style, you can perform several operations
+in one shot.</p>
 
 <pre>
 
